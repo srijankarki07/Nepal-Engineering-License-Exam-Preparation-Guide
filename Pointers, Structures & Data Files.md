@@ -1,0 +1,334 @@
+## **Section 3.2 — Pointers, Structures, and Data Files in C Programming**
+
+---
+
+### 1. **Pointers in C**
+
+#### **Definition:**
+
+A **pointer** is a **variable that stores the memory address** of another variable.
+
+```c
+int x = 10;
+int *ptr = &x;   // ptr stores address of x
+```
+
+* `&` → Address-of operator
+* `*` → Value-at (dereference) operator
+
+ **Example:**
+
+```c
+printf("%d", *ptr);  // Output: 10
+```
+
+Here, `*ptr` gives the **value** stored at the address.
+
+---
+
+### 1.1 **Pointer Declaration and Initialization**
+
+```c
+datatype *pointer_name;
+int *p;    // pointer to int
+char *c;   // pointer to char
+float *f;  // pointer to float
+```
+
+You can assign a variable’s address to a pointer:
+
+```c
+p = &x;
+```
+
+---
+
+### 1.2 **Pointer Arithmetic**
+
+Pointers can be **incremented**, **decremented**, and **compared**, but you **cannot** add or multiply two pointers.
+
+If `p` is a pointer to an integer at address `1000`, then
+`p + 1` → points to address `1004` (next integer, assuming 4 bytes per int).
+
+| Operation | Meaning                       |
+| --------- | ----------------------------- |
+| `p++`     | Moves to next memory location |
+| `p--`     | Moves to previous location    |
+| `p + n`   | Moves forward by n elements   |
+| `p - n`   | Moves backward by n elements  |
+
+Pointer arithmetic automatically scales according to data type size.
+
+---
+
+### 1.3 **Pointer and Array**
+
+The **name of an array** itself acts as a **pointer** to its first element.
+
+```c
+int arr[3] = {10, 20, 30};
+int *p = arr;
+
+printf("%d", *(p + 1));  // Output: 20
+```
+
+* `arr` → address of `arr[0]`
+* `*(arr + i)` → same as `arr[i]`
+
+So, arrays and pointers are **closely related** in C.
+
+---
+
+### 1.4 **Passing Pointer to Function**
+
+Instead of passing values (copy), you can pass **addresses** using pointers.
+This allows **modifying the original variable**.
+
+Example:
+
+```c
+void swap(int *a, int *b) {
+   int temp = *a;
+   *a = *b;
+   *b = temp;
+}
+
+int main() {
+   int x = 5, y = 10;
+   swap(&x, &y);
+   printf("%d %d", x, y);  // Output: 10 5
+}
+```
+
+Passing by **pointer** = **Call by Reference**
+
+---
+
+### 1.5 **Pointer to Pointer**
+
+You can have a pointer that stores the address of another pointer.
+
+```c
+int x = 5;
+int *p = &x;
+int **q = &p;
+```
+
+* `*p` → 5
+* `**q` → 5
+
+---
+
+### 1.6 **NULL Pointer**
+
+A pointer that doesn’t point anywhere (i.e., address = 0).
+
+```c
+int *ptr = NULL;
+```
+
+Use to check before accessing pointer to avoid segmentation faults.
+
+---
+
+### 2. **Structures in C**
+
+A **structure** is a **user-defined data type** that can group **different types of data** under one name.
+
+**Syntax:**
+
+```c
+struct student {
+   int id;
+   char name[20];
+   float marks;
+};
+```
+
+**Declaration and Initialization:**
+
+```c
+struct student s1 = {1, "Srijan", 90.5};
+```
+
+**Accessing Members:**
+
+```c
+printf("%d", s1.id);
+```
+
+---
+
+### 2.1 **Structure vs Union**
+
+| Feature  | **Structure**                        | **Union**                       |
+| -------- | ------------------------------------ | ------------------------------- |
+| Memory   | Separate memory for each member      | Shared memory (largest member)  |
+| Access   | All members at once                  | One member at a time            |
+| Use Case | When storing different data together | When using one member at a time |
+
+Example:
+
+```c
+union test {
+   int x;
+   float y;
+};
+```
+
+If `x` = 5 → `y` becomes undefined because memory is shared.
+
+---
+
+### 2.2 **Array of Structures**
+
+You can store multiple structures in an array.
+
+```c
+struct student s[3];
+```
+
+Access using loops:
+
+```c
+for(int i=0; i<3; i++)
+   scanf("%d %s %f", &s[i].id, s[i].name, &s[i].marks);
+```
+
+---
+
+### 2.3 **Passing Structure to Function**
+
+Structures can be passed to functions **by value** or **by reference**.
+
+Example:
+
+```c
+void display(struct student s) {
+   printf("%s", s.name);
+}
+```
+
+Or by reference:
+
+```c
+void modify(struct student *s) {
+   s->marks = 95.0;
+}
+```
+
+Note: Use `.` for direct access, `->` for pointer access.
+
+---
+
+### 2.4 **Structure and Pointer**
+
+You can create pointers to structures.
+
+```c
+struct student s1 = {1, "Srijan", 88.5};
+struct student *ptr = &s1;
+
+printf("%s", ptr->name);  // use -> operator
+```
+
+---
+
+### 3. **Data Files in C**
+
+File handling allows **storing data permanently** on disk.
+
+Include `<stdio.h>` to use file functions.
+
+#### **Basic Steps:**
+
+1. Declare file pointer → `FILE *fp;`
+2. Open file → `fopen("filename", "mode");`
+3. Perform operations (read/write)
+4. Close file → `fclose(fp);`
+
+---
+
+### 3.1 **Opening a File**
+
+| Mode   | Meaning       | Action                                 |
+| ------ | ------------- | -------------------------------------- |
+| `"r"`  | Read          | Opens existing file                    |
+| `"w"`  | Write         | Creates new file (deletes old content) |
+| `"a"`  | Append        | Add data to end                        |
+| `"r+"` | Read + Write  | Existing file                          |
+| `"w+"` | Read + Write  | New file                               |
+| `"a+"` | Read + Append | Both                                   |
+
+Example:
+
+```c
+FILE *fp;
+fp = fopen("data.txt", "w");
+```
+
+---
+
+### 3.2 **Input/Output Operations on Files**
+
+#### ➤ **Character I/O**
+
+```c
+fputc('A', fp);
+ch = fgetc(fp);
+```
+
+#### ➤ **String I/O**
+
+```c
+fputs("Hello", fp);
+fgets(str, 100, fp);
+```
+
+#### ➤ **Formatted I/O**
+
+```c
+fprintf(fp, "%d %s", id, name);
+fscanf(fp, "%d %s", &id, name);
+```
+
+#### ➤ **Binary I/O**
+
+```c
+fwrite(&s1, sizeof(s1), 1, fp);
+fread(&s2, sizeof(s2), 1, fp);
+```
+
+---
+
+### 3.3 **Sequential vs Random File Access**
+
+| Type                  | Access Method                | Example                          |
+| --------------------- | ---------------------------- | -------------------------------- |
+| **Sequential Access** | Data read/written in order   | `fgetc()`, `fgets()`             |
+| **Random Access**     | Access any location directly | `fseek()`, `ftell()`, `rewind()` |
+
+**Random Access Functions:**
+
+```c
+fseek(fp, position, origin); // Move file pointer
+ftell(fp);                   // Get current position
+rewind(fp);                  // Move pointer to beginning
+```
+
+---
+
+## **Quick Key Points for MCQs**
+
+* Pointer stores **address**, not value.
+* `*` (dereference) gets value from address.
+* Array name acts as pointer.
+* `p++` increments by size of data type.
+* `->` used to access structure members through pointer.
+* Structure stores **multiple data types**, union **shares memory**.
+* File must be **closed** with `fclose(fp)` to save data.
+* `"w"` mode **overwrites** file, `"a"` mode **adds** data.
+* `fseek(fp, 0, SEEK_SET)` → moves to beginning.
+
+---
+
